@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medi Chatbot - AI Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body, html {
+            background-color: #0b111e; /* Deep Cyber Blue Background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e2e8f0;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #wrapper {
+            height: 100vh;
+            display: flex;
+            position: relative;
+            width: 100%;
+        }
+
+        /* Sidebar Styling - Dark Tech Blue */
+        #sidebar-wrapper {
+            height: 100vh;
+            width: 280px;
+            background-color: #0f172a;
+            border-right: 1px solid #1e293b !important;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1040;
+        }
+
+        #sidebar-wrapper .list-group-item {
+            color: #94a3b8 !important;
+            background-color: transparent;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        #sidebar-wrapper .list-group-item:hover, 
+        #sidebar-wrapper .list-group-item.active {
+            background-color: #1e293b !important;
+            color: #38bdf8 !important;
+        }
+
+        /* History Container */
+        .history-section {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px 15px;
+            border-top: 1px solid #1e293b;
+        }
+
+        .history-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .history-item {
+            font-size: 14px;
+            padding: 8px 12px;
+            color: #94a3b8;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .history-item:hover {
+            background-color: #1e293b;
+            color: #e2e8f0;
+        }
+
+        .history-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-delete-history {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-delete-history:hover {
+            color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Chat Area Styling */
+        #chat-container {
+            background-color: #0b111e;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            width: calc(100% - 280px);
+            height: 100vh;
+        }
+
+        .chat-header {
+            background-color: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            padding: 15px 25px;
+        }
+
+        #chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        /* Custom Scrollbar */
+        #chat-box::-webkit-scrollbar, .history-section::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-box::-webkit-scrollbar-thumb, .history-section::-webkit-scrollbar-thumb {
+            background-color: #1e293b;
+            border-radius: 4px;
+        }
+
+        /* Message Bubbles */
+        .message-row {
+            display: flex;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .user-row {
+            justify-content: flex-end;
+        }
+
+        .bot-row {
+            justify-content: flex-start;
+        }
+
+        .user-msg {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            padding: 12px 18px;
+            border-radius: 18px 18px 0px 18px;
+            max-width: 75%;
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.2);
+            word-break: break-word;
+        }
+
+        .bot-msg {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #1e293b;
+            padding: 15px 20px;
+            border-radius: 18px 18px 18px 0px;
+            max-width: 80%;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        /* Input Panel */
+        .input-panel {
+            background-color: #0f172a;
+            border-top: 1px solid #1e293b;
+            padding: 15px 25px;
+        }
+
+        .input-group {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 30px;
+            padding: 5px 10px;
+        }
+
+        #user-input {
+            background-color: transparent;
+            border: none;
+            color: #e2e8f0;
+            padding-left: 15px;
+        }
+
+        #user-input:focus {
+            box-shadow: none;
+            background-color: transparent;
+            color: #e2e8f0;
+        }
+
+        .btn-send {
+            background-color: #38bdf8;
+            color: #0f172a;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-send:hover {
+            background-color: #0ea5e9;
+            transform: scale(1.05);
+        }
+
+        /* Skeleton Loader Animation */
+        .typing-loader {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+        }
+
+        .typing-loader span {
+            width: 8px;
+            height: 8px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.3s infinite ease-in-out;
+        }
+
+        .typing-loader span:nth-child(2) { animation-delay: -1.1s; }
+        .typing-loader span:nth-child(3) { animation-delay: -0.9s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        /* Backdrop / Overlay Overlay for Mobile */
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1030;
+        }
+
+        /* ================= RESPONSIVE MEDIA QUERIES ================= */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                position: fixed;
+                left: 0;
+                top: 0;
+                transform: translateX(-100%);
+            }
+            
+            #sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+
+            #sidebar-wrapper.show + #sidebar-overlay {
+                display: block;
+            }
+
+            #chat-container {
+                width: 100%;
+            }
+
+            .user-msg, .bot-msg {
+                max-width: 90%;
+            }
+
+            #chat-box {
+                padding: 15px;
+            }
+
+            .chat-header, .input-panel {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="wrapper">
+        <div id="sidebar-wrapper">
+            <div class="sidebar-heading p-4 text-white border-bottom border-secondary d-flex align-items-center gap-2">
+                <i class="fa-solid fa-heart-pulse text-info fs-4"></i>
+                <span class="fw-bold fs-5"><b>DOC BOT 🩺</b></span>
+            </div>
+            <div class="list-group list-group-flush p-3">
+                <a onclick="startNewChat(); closeSidebarOnMobile();" class="list-group-item active"><i class="fa-solid fa-plus me-3"></i>New Chat</a>
+            </div>
+            
+            <div class="history-section">
+                <div class="history-title d-flex justify-content-between align-items-center">
+                    <span>Search History</span>
+                    <i class="fa-solid fa-clock-history"></i>
+                </div>
+                <div id="history-list"></div>
+            </div>
+        </div>
+
+        <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <div id="chat-container">
+            <div class="chat-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn text-white p-0 fs-4" id="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h5 class="mb-0 text-white fw-bold"><b>DOC BOT 🩺</b></h5>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm border-secondary text-white" onclick="clearCurrentChat()">
+                    <i class="fa-solid fa-trash me-2 text-white"></i>
+                </button>
+            </div>
+
+            <div id="chat-box"></div>
+
+            <div class="input-panel">
+                <div class="input-group">
+                    <input type="text" id="user-input" class="form-control" placeholder="আপনার লক্ষণ এখানে লিখুন... (যেমন: জ্বর, সর্দি, cough, chest pain)" onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button class="btn btn-send" id="send-btn" onclick="sendMessage()">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="text-center text-white mt-2">
+                    <div>AI can be mistake.</div>
+                    <div>ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন । </div>
+                    <footer><b>Powered by Dev.Ankur</b></footer>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // চ্যাট মেমোরি অবজেক্ট
+        let currentChatId = null;
+        const WELCOME_TEXT = `👋 হ্যালো! আমি আপনার লোকাল হেলথ অ্যাসিস্ট্যান্ট। আপনার যেকোনো শারীরিক সমস্যা বা লক্ষণ (যেমন: জ্বর, বুকে ব্যথা, পেট কামড়ানো) বাংলায় বা ইংরেজিতে লিখুন। আমি তাৎক্ষণিক প্রাথমিক চিকিৎসা ও বিশেষজ্ঞ ডাক্তারের পরামর্শ দেব।`;
+
+        // পেজ লোড হবার সাথে সাথে হিস্ট্রি এবং চ্যাট রেন্ডার করা
+        window.onload = function() {
+            loadHistoryList();
+            startNewChat();
+        };
+
+        // সাইডবার ওপেন/ক্লোজ টগল ফাংশন
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar-wrapper');
+            sidebar.classList.toggle('show');
+        }
+
+        // মোবাইল ডিভাইসে আইটেম সিলেক্ট করলে অটো সাইডবার বন্ধ করার জন্য
+        function closeSidebarOnMobile() {
+            const sidebar = document.getElementById('sidebar-wrapper');
+            if (sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+        }
+
+        // একদম নতুন চ্যাট সেশন শুরু করা
+        function startNewChat() {
+            currentChatId = 'chat_' + Date.now();
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = '';
+            
+            // ওয়েলকাম মেসেজ পুশ করা
+            appendMessage(WELCOME_TEXT, 'bot-msg', 'bot-row');
+            document.getElementById('user-input').value = '';
+            document.getElementById('user-input').focus();
+        }
+
+        // কারেন্ট স্ক্রিনের চ্যাট ক্লিয়ার করা
+        function clearCurrentChat() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = '';
+            appendMessage(WELCOME_TEXT, 'bot-msg', 'bot-row');
+        }
+
+        // মেসেজ ব্যাকএন্ডে পাঠানো
+        function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const message = inputField.value.trim();
+            if (!message) return;
+
+            // ১. ইউজারের মেসেজ স্ক্রিনে দেখানো
+            appendMessage(message, 'user-msg', 'user-row');
+            inputField.value = '';
+
+            // ২. লোডার দেখানো
+            const loadingId = appendMessage('<div class="typing-loader"><span></span><span></span><span></span></div>', 'bot-msg', 'bot-row');
+
+            // ৩. ব্যাকএন্ড এপিআই হিট করা
+            fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const loader = document.getElementById(loadingId);
+                if (loader) loader.remove();
+
+                if (data.response) {
+                    let formattedText = data.response
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/📋/g, '📋')
+                        .replace(/🩹/g, '🩹')
+                        .replace(/🌿/g, '🌿')
+                        .replace(/🩺/g, '🩺')
+                        .replace(/⚠️/g, '⚠️')
+                        .replace(/🚨/g, '🚨');
+                    
+                    appendMessage(formattedText, 'bot-msg', 'bot-row');
+                    
+                    // ৪. সফল সার্চ হলে লোকাল স্টোরেজে সেভ করা
+                    saveToLocalStorage(message, formattedText);
+                } else if (data.error) {
+                    appendMessage('ত্রুটি: ' + data.error, 'bot-msg text-danger', 'bot-row');
+                } else {
+                    appendMessage('দুঃখিত, কোনো টেকনিক্যাল সমস্যা হয়েছে।', 'bot-msg text-danger', 'bot-row');
+                }
+            })
+            .catch(error => {
+                const loader = document.getElementById(loadingId);
+                if (loader) loader.remove();
+                appendMessage('সার্ভার রেসপন্স করছে না। পাইথন কনসোল চেক করুন।', 'bot-msg text-danger', 'bot-row');
+                console.error('Fetch System Error:', error);
+            });
+        }
+
+        // স্ক্রিনে চ্যাট রেন্ডার করার ফাংশন
+        function appendMessage(text, className, rowType) {
+            const chatBox = document.getElementById('chat-box');
+            const messageId = 'msg-' + Date.now() + Math.random().toString(36).substr(2, 5);
+            
+            const rowDiv = document.createElement('div');
+            rowDiv.className = `message-row ${rowType}`;
+            rowDiv.id = messageId;
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = className;
+            msgDiv.innerHTML = text.replace(/\n/g, '<br>');
+            
+            rowDiv.appendChild(msgDiv);
+            chatBox.appendChild(rowDiv);
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return messageId;
+        }
+
+        /* ================= LOCAL STORAGE HISTORY ENGINE ================= */
+        
+        function saveToLocalStorage(query, responseText) {
+            let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+            
+            // একই কোয়েরি বারবার সেভ করা এড়াতে ডুপ্লিকেট রিমুভ
+            history = history.filter(item => item.query.toLowerCase() !== query.toLowerCase());
+            
+            // নতুন সার্চ অবজেক্ট পুশ করা
+            history.unshift({
+                id: 'hist_' + Date.now(),
+                query: query,
+                response: responseText,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            });
+
+            // সর্বোচ্চ ১৫টি হিস্ট্রি রেকর্ড রাখা
+            if(history.length > 15) history.pop();
+
+            localStorage.setItem('doc_bot_history', JSON.stringify(history));
+            loadHistoryList();
+        }
+
+        function loadHistoryList() {
+            const historyList = document.getElementById('history-list');
+            const history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+            
+            if(history.length === 0) {
+                historyList.innerHTML = '<div class="text-muted text-center" style="font-size:12px; padding:10px;">No history yet</div>';
+                return;
+            }
+
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'history-item';
+                
+                // Content section + Delete button
+                itemDiv.innerHTML = `
+                    <div class="history-text" onclick="loadOldChatFromHistory('${escapeHtml(item.query)}', '${escapeHtml(item.response)}'); closeSidebarOnMobile();">
+                        <i class="fa-regular fa-comment-medical text-info"></i> 
+                        <span>${item.query}</span>
+                    </div>
+                    <button class="btn-delete-history" onclick="deleteHistoryItem(event, '${item.id}')" title="Delete record">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                historyList.appendChild(itemDiv);
+            });
+        }
+
+        // সিঙ্গেল হিস্ট্রি আইটেম ডিলিট করার ফাংশন
+        function deleteHistoryItem(event, id) {
+            event.stopPropagation(); // ক্লিক যেন চ্যাট লোড না করে ফেলে
+            let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+            history = history.filter(item => item.id !== id);
+            localStorage.setItem('doc_bot_history', JSON.stringify(history));
+            loadHistoryList();
+        }
+
+        // HTML স্ট্রিং এস্কেপ করার জন্য হেল্পার ফাংশন (XSS/Breakage প্রোটেকশন)
+        function escapeHtml(text) {
+            return text
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '&quot;')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r');
+        }
+
+        function loadOldChatFromHistory(query, savedResponse) {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = '';
+            
+            // পুরানো সার্চ এবং তার উত্তর স্ক্রিনে রেন্ডার করা
+            appendMessage(query.replace(/\\'/g, "'"), 'user-msg', 'user-row');
+            appendMessage(savedResponse.replace(/\\'/g, "'"), 'bot-msg', 'bot-row');
+        }
+    </script>
+</body>
+</html>
