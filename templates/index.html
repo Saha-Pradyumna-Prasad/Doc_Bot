@@ -264,6 +264,25 @@
             z-index: 1030;
         }
 
+        /* Custom Dark Modal Styling */
+        .custom-modal .modal-content {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            color: #e2e8f0;
+            border-radius: 16px;
+        }
+        .custom-modal .modal-header {
+            border-bottom: 1px solid #1e293b;
+        }
+        .custom-modal .modal-footer {
+            border-top: 1px solid #1e293b;
+        }
+        .instructions-list li {
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
         /* ================= RESPONSIVE MEDIA QUERIES ================= */
         @media (max-width: 768px) {
             #sidebar-wrapper {
@@ -330,9 +349,14 @@
                     </button>
                     <h5 class="mb-0 text-white fw-bold"><b>DOC BOT 🩺</b></h5>
                 </div>
-                <button class="btn btn-outline-secondary btn-sm border-secondary text-white" onclick="clearCurrentChat()">
-                    <i class="fa-solid fa-trash me-2 text-white"></i>
-                </button>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-info btn-sm text-dark fw-bold px-3" data-bs-toggle="modal" data-bs-target="#usageModal">
+                        <i class="fa-solid fa-book-open me-1"></i> ব্যবহারবিধি
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm border-secondary text-white" onclick="clearCurrentChat()">
+                        <i class="fa-solid fa-trash text-white"></i>
+                    </button>
+                </div>
             </div>
 
             <div id="chat-box"></div>
@@ -346,12 +370,57 @@
                 </div>
                 <div class="text-center text-white mt-2">
                     <div>AI can be mistake.</div>
-                    <div>ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন । </div>
+                    <div>ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন । </div>
                     <footer><b>Powered by Dev.Ankur</b></footer>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade custom-modal" id="usageModal" tabindex="-1" aria-labelledby="usageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-info" id="usageModalLabel">
+                        <i class="fa-solid fa-circle-info me-2"></i> অ্যাপ ব্যবহারবিধি ও নির্দেশিকা
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="instructions-list list-unstyled ps-1">
+                        <li>
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            <strong>সংক্ষিপ্ত ইনপুট:</strong> এই অ্যাপে বড় কোনো বাক্য লেখার প্রয়োজন নেই। আপনার সমস্যা বা প্রধান লক্ষণটি (যেমন: <b>জ্বর, সর্দি, পেটে ব্যথা, chest pain</b>) শুধু একটি শব্দে লিখলেই রোবট নির্ভুল উত্তর দেবে।
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock text-warning me-2"></i>
+                            <strong>ইনস্ট্যান্ট রেসপন্স:</strong> আপনার মূল্যবান সময় বাঁচাতে অত্যন্ত দ্রুত এবং নিখুঁতভাবে অটোমেটিক প্রাইমারি ফার্স্ট এইড ও ডাক্তারের পরামর্শ জেনারেট করা হয়।
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-folder-minus text-info me-2"></i>
+                            <strong>হিস্ট্রি ট্র্যাকিং:</strong> প্রতিবার সার্চ করার সাথে সাথে বামপাশের <b>"Search History"</b> প্যানেলে একটি করে রেকর্ড জমা হবে, যা পরবর্তীতে যেকোনো সময় এক ক্লিকে দেখা যাবে।
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-trash-can text-danger me-2"></i>
+                            <strong>হিস্ট্রি ও চ্যাট ডিলিট:</strong> আপনি চাইলে সাইডবারের নির্দিষ্ট কোনো সার্চ রেকর্ড ডিলিট আইকনে চেপে মুছে ফেলতে পারবেন। এছাড়া ডানদিকের ট্র্যাশ বাটনে ক্লিক করে পুরো কারেন্ট চ্যাট স্ক্রিন মুহূর্তেই ফাঁকা করা যাবে।
+                        </li>
+                        <hr class="border-secondary my-3">
+                        <li class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-20 text-warning">
+                            <i class="fa-solid fa-triangle-exclamation me-2 fs-5 text-danger"></i>
+                            <strong>সতর্কতা:</strong> এই বটটি শুধুমাত্র প্রাথমিক তথ্য ও সচেতনতার জন্য তৈরি। কোনো ধরনের ওষুধ বিশেষজ্ঞ ডাক্তারের প্রেসক্রিপশন ব্যতিরেকে সেবন করা সম্পূর্ণ নিষিদ্ধ ও বিপজ্জনক।
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary px-4 fw-bold shadow" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Back to Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // চ্যাট মেমোরি অবজেক্ট
@@ -544,7 +613,7 @@
             const chatBox = document.getElementById('chat-box');
             chatBox.innerHTML = '';
             
-            // পুরানো সার্চ এবং তার উত্তর স্ক্রিনে রেন্ডার করা
+            // पुरानो सर्च এবং তার উত্তর স্ক্রিনে রেন্ডার করা
             appendMessage(query.replace(/\\'/g, "'"), 'user-msg', 'user-row');
             appendMessage(savedResponse.replace(/\\'/g, "'"), 'bot-msg', 'bot-row');
         }
