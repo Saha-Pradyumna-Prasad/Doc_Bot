@@ -1163,6 +1163,7 @@ SYNONYMS_MAPPING = {
 "child drowning": "drowning",
 "শিশু ডুবে যাওয়া": "drowning",
 "বাচ্চা ডুবে যাওয়া": "drowning","গলা ব্যথা": "throat pain",
+   "গলায় বাথা": "throat pain",
 "throat pain": "throat pain",
 "সোর থ্রোট": "throat pain",
 "গলাব্যথা": "throat pain",
