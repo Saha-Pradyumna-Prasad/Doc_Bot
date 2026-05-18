@@ -283,6 +283,27 @@
             line-height: 1.5;
         }
 
+        /* Download App Button Styling */
+        .btn-download-app {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background-color: #1e293b;
+            color: #38bdf8 !important;
+            border: 1px solid #334155;
+            transition: all 0.2s ease-in-out;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-download-app:hover {
+            background-color: #38bdf8;
+            color: #0f172a !important;
+            border-color: #38bdf8;
+            transform: translateY(-1px);
+        }
+
         /* ================= RESPONSIVE MEDIA QUERIES ================= */
         @media (max-width: 768px) {
             #sidebar-wrapper {
@@ -369,9 +390,14 @@
                     </button>
                 </div>
                 <div class="text-center text-white mt-2">
-                    <div>AI can be mistake.</div>
-                    <div>ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন । </div>
-                    <footer><b>Powered by Dev.Ankur</b></footer>
+                    <div style="font-size: 14px;">AI can be mistake.</div>
+                    <div style="font-size: 14px;">ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন । </div>
+                    <div class="mt-2 d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2">
+                        <footer style="font-size: 14px;"><b>Powered by Dev.Ankur</b></footer>
+                        <a href="https://drive.google.com/file/d/1bEGJUW2Pl1JHRCVWKSrPxpZRkkpzWqSu/view?usp=sharing" class="btn-download-app" target="_blank">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Download App for Mobile
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -509,7 +535,7 @@
                 } else if (data.error) {
                     appendMessage('ত্রুটি: ' + data.error, 'bot-msg text-danger', 'bot-row');
                 } else {
-                    appendMessage('দুঃখিত, কোনো টেকনিক্যাল সমস্যা হয়েছে।', 'bot-msg text-danger', 'bot-row');
+                    appendMessage('দুঃখিত, কোনো টেকনিক্যাল সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।', 'bot-msg text-danger', 'bot-row');
                 }
             })
             .catch(error => {
@@ -568,7 +594,7 @@
             const history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
             
             if(history.length === 0) {
-                historyList.innerHTML = '<div class="text-center text-white" style="font-size:12px; padding:10px;">No history yet</div>';
+                historyList.innerHTML = '<div class="text-muted text-center" style="font-size:12px; padding:10px;">No history yet</div>';
                 return;
             }
 
@@ -613,7 +639,7 @@
             const chatBox = document.getElementById('chat-box');
             chatBox.innerHTML = '';
             
-            // पुरानो सर्च এবং তার উত্তর স্ক্রিনে রেন্ডার করা
+            // पुरानो সার্চ এবং তার উত্তর স্ক্রিনে রেন্ডার করা
             appendMessage(query.replace(/\\'/g, "'"), 'user-msg', 'user-row');
             appendMessage(savedResponse.replace(/\\'/g, "'"), 'bot-msg', 'bot-row');
         }
