@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Medi Chatbot - AI Assistant</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         body, html {
-            background-color: #0b111e; /* Deep Cyber Blue Background */
+            background-color: #0b111e;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #e2e8f0;
             height: 100%;
@@ -24,7 +24,6 @@
             width: 100%;
         }
 
-        /* Sidebar Styling - Dark Tech Blue */
         #sidebar-wrapper {
             height: 100vh;
             width: 280px;
@@ -55,7 +54,6 @@
             color: #38bdf8 !important;
         }
 
-        /* History Container */
         .history-section {
             flex-grow: 1;
             overflow-y: auto;
@@ -115,7 +113,6 @@
             background-color: rgba(239, 68, 68, 0.1);
         }
 
-        /* Chat Area Styling */
         #chat-container {
             background-color: #0b111e;
             display: flex;
@@ -137,7 +134,6 @@
             padding: 25px;
         }
 
-        /* Custom Scrollbar */
         #chat-box::-webkit-scrollbar, .history-section::-webkit-scrollbar {
             width: 6px;
         }
@@ -146,7 +142,6 @@
             border-radius: 4px;
         }
 
-        /* Message Bubbles */
         .message-row {
             display: flex;
             margin-bottom: 20px;
@@ -182,7 +177,6 @@
             word-break: break-word;
         }
 
-        /* Input Panel */
         .input-panel {
             background-color: #0f172a;
             border-top: 1px solid #1e293b;
@@ -194,19 +188,25 @@
             border: 1px solid #334155;
             border-radius: 30px;
             padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         #user-input {
             background-color: transparent;
             border: none;
             color: #e2e8f0;
-            padding-left: 15px;
+            padding: 10px 15px;
+            flex: 1;
+            font-size: 16px;
         }
 
         #user-input:focus {
             box-shadow: none;
             background-color: transparent;
             color: #e2e8f0;
+            outline: none;
         }
 
         .btn-send {
@@ -227,7 +227,6 @@
             transform: scale(1.05);
         }
 
-        /* Skeleton Loader Animation */
         .typing-loader {
             display: flex;
             align-items: center;
@@ -252,7 +251,6 @@
             30% { transform: translateY(-6px); }
         }
 
-        /* Backdrop / Overlay Overlay for Mobile */
         #sidebar-overlay {
             display: none;
             position: fixed;
@@ -264,7 +262,6 @@
             z-index: 1030;
         }
 
-        /* Custom Dark Modal Styling */
         .custom-modal .modal-content {
             background-color: #0f172a;
             border: 1px solid #1e293b;
@@ -283,7 +280,6 @@
             line-height: 1.5;
         }
 
-        /* Download App Button Styling */
         .btn-download-app {
             font-size: 11px;
             padding: 3px 10px;
@@ -304,7 +300,44 @@
             transform: translateY(-1px);
         }
 
-        /* ================= RESPONSIVE MEDIA QUERIES ================= */
+        /* Voice Button Styles */
+        .voice-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .voice-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .voice-btn.listening {
+            background-color: #ff4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .voice-status {
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+            color: #38bdf8;
+            min-height: 30px;
+        }
+
         @media (max-width: 768px) {
             #sidebar-wrapper {
                 position: fixed;
@@ -336,61 +369,16 @@
             .chat-header, .input-panel {
                 padding: 12px 15px;
             }
+            
+            .voice-btn, .btn-send {
+                width: 44px;
+                height: 44px;
+            }
+            
+            #user-input {
+                font-size: 16px;
+            }
         }
-        /* Voice Button Styles */
-.voice-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.voice-btn:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
-}
-
-.voice-btn.listening {
-    background-color: #ff4444;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-.input-group {
-    background-color: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 30px;
-    padding: 5px 10px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-#user-input {
-    background-color: transparent;
-    border: none;
-    color: #e2e8f0;
-    padding: 10px 15px;
-    flex: 1;
-}
-
-.voice-status {
-    font-size: 12px;
-    margin-top: 5px;
-    text-align: center;
-    color: #38bdf8;
-}
     </style>
 </head>
 <body>
@@ -438,18 +426,18 @@
 
             <div class="input-panel">
                 <div class="input-group">
-                    <input type="text" id="user-input" class="form-control" placeholder="আপনার লক্ষণ এখানে লিখুন... (যেমন: জ্বর, সর্দি, cough, chest pain)" onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <input type="text" id="user-input" class="form-control" placeholder="লিখুন বা ভয়েস বলুন... (যেমন: জ্বর, fever)" onkeypress="if(event.key === 'Enter') sendMessage()">
                     <button class="voice-btn" id="voice-btn" onclick="startVoiceInput()">
-            <i class="fa-solid fa-microphone"></i>
-        </button>
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
                     <button class="btn btn-send" id="send-btn" onclick="sendMessage()">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
-                 <div id="voice-status" class="voice-status"></div>
+                <div id="voice-status" class="voice-status"></div>
                 <div class="text-center text-white mt-2">
                     <div style="font-size: 14px;">AI can be mistake.</div>
-                    <div style="font-size: 14px;">ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন । </div>
+                    <div style="font-size: 14px;">ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন ।</div>
                     <div class="mt-2 d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2">
                         <footer style="font-size: 14px;"><b>Powered by Dev.Ankur</b></footer>
                         <a href="https://drive.google.com/file/d/1bEGJUW2Pl1JHRCVWKSrPxpZRkkpzWqSu/view?usp=sharing" class="btn-download-app" target="_blank">
@@ -472,26 +460,14 @@
                 </div>
                 <div class="modal-body">
                     <ul class="instructions-list list-unstyled ps-1">
-                        <li>
-                            <i class="fa-solid fa-circle-check text-success me-2"></i>
-                            <strong>সংক্ষিপ্ত ইনপুট:</strong> এই অ্যাপে বড় কোনো বাক্য লেখার প্রয়োজন নেই। আপনার সমস্যা বা প্রধান লক্ষণটি (যেমন: <b>জ্বর, সর্দি, পেটে ব্যথা, chest pain</b>) শুধু একটি শব্দে লিখলেই রোবট নির্ভুল উত্তর দেবে।
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-clock text-warning me-2"></i>
-                            <strong>ইনস্ট্যান্ট রেসপন্স:</strong> আপনার মূল্যবান সময় বাঁচাতে অত্যন্ত দ্রুত এবং নিখুঁতভাবে অটোমেটিক প্রাইমারি ফার্স্ট এইড ও ডাক্তারের পরামর্শ জেনারেট করা হয়।
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-folder-minus text-info me-2"></i>
-                            <strong>হিস্ট্রি ট্র্যাকিং:</strong> প্রতিবার সার্চ করার সাথে সাথে বামপাশের <b>"Search History"</b> প্যানেলে একটি করে রেকর্ড জমা হবে, যা পরবর্তীতে যেকোনো সময় এক ক্লিকে দেখা যাবে।
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-trash-can text-danger me-2"></i>
-                            <strong>হিস্ট্রি ও চ্যাট ডিলিট:</strong> আপনি চাইলে সাইডবারের নির্দিষ্ট কোনো সার্চ রেকর্ড ডিলিট আইকনে চেপে মুছে ফেলতে পারবেন। এছাড়া ডানদিকের ট্র্যাশ বাটনে ক্লিক করে পুরো কারেন্ট চ্যাট স্ক্রিন মুহূর্তেই ফাঁকা করা যাবে।
-                        </li>
+                        <li><i class="fa-solid fa-circle-check text-success me-2"></i><strong>ভয়েস ইনপুট:</strong> 🎤 বাটনে ক্লিক করে বাংলা বা ইংরেজিতে কথা বলুন। 2 সেকেন্ড পর অটোমেটিক সার্চ হবে।</li>
+                        <li><i class="fa-solid fa-circle-check text-success me-2"></i><strong>সংক্ষিপ্ত ইনপুট:</strong> আপনার সমস্যা বা প্রধান লক্ষণটি (যেমন: <b>জ্বর, সর্দি, fever, chest pain</b>) লিখলেই রোবট উত্তর দেবে।</li>
+                        <li><i class="fa-solid fa-clock text-warning me-2"></i><strong>ইনস্ট্যান্ট রেসপন্স:</strong> অত্যন্ত দ্রুত এবং নিখুঁতভাবে প্রাথমিক চিকিৎসা ও ডাক্তারের পরামর্শ দেয়।</li>
+                        <li><i class="fa-solid fa-folder-minus text-info me-2"></i><strong>হিস্ট্রি ট্র্যাকিং:</strong> বামপাশের "Search History" প্যানেলে রেকর্ড জমা হবে।</li>
                         <hr class="border-secondary my-3">
                         <li class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-20 text-warning">
                             <i class="fa-solid fa-triangle-exclamation me-2 fs-5 text-danger"></i>
-                            <strong>সতর্কতা:</strong> এই বটটি শুধুমাত্র প্রাথমিক তথ্য ও সচেতনতার জন্য তৈরি। কোনো ধরনের ওষুধ বিশেষজ্ঞ ডাক্তারের প্রেসক্রিপশন ব্যতিরেকে সেবন করা সম্পূর্ণ নিষিদ্ধ ও বিপজ্জনক।
+                            <strong>সতর্কতা:</strong> এই বটটি শুধুমাত্র প্রাথমিক তথ্য ও সচেতনতার জন্য। ওষুধ ডাক্তারের পরামর্শ ছাড়া সেবন করবেন না।
                         </li>
                     </ul>
                 </div>
@@ -504,17 +480,16 @@
         </div>
     </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
+    <script>
     // চ্যাট মেমোরি অবজেক্ট
     let currentChatId = null;
-    const WELCOME_TEXT = `👋 হ্যালো! আমি আপনার লোকাল হেলথ অ্যাসিস্ট্যান্ট। আপনার যেকোনো শারীরিক সমস্যা বা লক্ষণ (যেমন: জ্বর, বুকে ব্যথা, পেট কামড়ানো) বাংলায় বা ইংরেজিতে লিখুন বা ভয়েস বলুন। আমি তাৎক্ষণিক প্রাথমিক চিকিৎসা ও বিশেষজ্ঞ ডাক্তারের পরামর্শ দেব।`;
+    const WELCOME_TEXT = `👋 হ্যালো! আমি আপনার হেলথ অ্যাসিস্ট্যান্ট। আপনার সমস্যা বলুন (বাংলা বা ইংরেজিতে) - যেমন: জ্বর, fever, chest pain, কাশি আমি উত্তর দেব।`;
 
-    // Voice Recognition Setup
+    // Voice Recognition Setup - মোবাইল ও ওয়েব উভয়ের জন্য
     let recognition = null;
     let isListening = false;
-    let voiceTimeout = null;
 
     // ব্রাউজার Speech Recognition সাপোর্ট চেক
     function initSpeechRecognition() {
@@ -529,13 +504,13 @@
         
         const recognitionInstance = new SpeechRecognition();
         recognitionInstance.continuous = false;
-        recognitionInstance.interimResults = true;
+        recognitionInstance.interimResults = false;  // মোবাইলের জন্য false ভালো
         recognitionInstance.lang = 'bn-BD';  // বাংলা ও ইংরেজি উভয়ের জন্য
         
         return recognitionInstance;
     }
 
-    // ভয়েস ইনপুট শুরু করার ফাংশন (আপগ্রেডেড)
+    // ভয়েস ইনপুট শুরু করার ফাংশন (মোবাইল ফ্রেন্ডলি)
     function startVoiceInput() {
         // মাইক্রোফোন চেক
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -559,44 +534,30 @@
         
         recognition = new SpeechRecognition();
         recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = 'bn-BD';  // বাংলা ও ইংরেজি উভয় সাপোর্ট
-        
-        let finalTranscript = '';
-        let interimTranscript = '';
+        recognition.interimResults = false;  // মোবাইলের জন্য false
+        recognition.lang = 'bn-BD';  // বাংলা ও ইংরেজি
         
         // রেজাল্ট পাওয়ার পর
         recognition.onresult = function(event) {
-            finalTranscript = '';
-            interimTranscript = '';
-            
+            let recognizedText = '';
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript;
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
+                    recognizedText += event.results[i][0].transcript;
                 }
             }
             
-            // ইন্টারিম রেজাল্ট দেখান (রিয়েল টাইম)
-            const currentText = finalTranscript || interimTranscript;
-            if (currentText.trim().length > 0) {
-                const inputField = document.getElementById('user-input');
-                inputField.value = currentText;
-            }
-            
-            // ফাইনাল রেজাল্ট পেলে
-            if (finalTranscript.trim().length > 0) {
-                const recognizedText = finalTranscript.trim();
-                console.log('Final recognized:', recognizedText);
+            if (recognizedText.trim().length > 0) {
+                console.log('Recognized:', recognizedText);
                 const inputField = document.getElementById('user-input');
                 inputField.value = recognizedText;
                 showVoiceStatus('✅ "' + recognizedText + '"', 'success');
                 
-                // 4-6 সেকেন্ড ওয়েট করে অটো সার্চ (এখন 2 সেকেন্ড)
+                // 1.5 সেকেন্ড পর অটো সার্চ
                 setTimeout(function() {
                     sendMessage();
-                }, 2000);
+                }, 1500);
+            } else {
+                showVoiceStatus('❌ কিছু বলা হয়নি, আবার চেষ্টা করুন', 'error');
             }
         };
         
@@ -613,7 +574,10 @@
                     errorMessage = 'মাইক্রোফোন পাওয়া যায়নি।';
                     break;
                 case 'not-allowed':
-                    errorMessage = 'মাইক্রোফোন অনুমতি দিন।';
+                    errorMessage = 'মাইক্রোফোন অনুমতি দিন। সেটিংসে গিয়ে মাইক্রোফোন Allow করুন।';
+                    break;
+                case 'network':
+                    errorMessage = 'নেটওয়ার্ক সমস্যা। আবার চেষ্টা করুন।';
                     break;
                 default:
                     errorMessage = 'আবার চেষ্টা করুন।';
@@ -632,7 +596,7 @@
             isListening = true;
             const voiceBtn = document.getElementById('voice-btn');
             voiceBtn.classList.add('listening');
-            showVoiceStatus('🎤 কথা বলা শুরু করুন (বাংলা বা ইংরেজি)...', 'listening');
+            showVoiceStatus('🎤 কথা বলুন (বাংলা বা ইংরেজি)...', 'listening');
         };
         
         // শুরু করুন
@@ -674,6 +638,13 @@
         isListening = false;
         const voiceBtn = document.getElementById('voice-btn');
         if(voiceBtn) voiceBtn.classList.remove('listening');
+        
+        setTimeout(() => {
+            const statusDiv = document.getElementById('voice-status');
+            if (statusDiv && statusDiv.innerHTML.includes('শুনছি')) {
+                // স্ট্যাটাস থাকতে পারে, কিন্তু সাফ করছি না
+            }
+        }, 500);
     }
 
     // পেজ লোড হলে
@@ -681,7 +652,7 @@
         loadHistoryList();
         startNewChat();
         
-        // মাইক্রোফোন পারমিশন আগে থেকেই নেওয়া
+        // মাইক্রোফোন পারমিশন আগে থেকেই নেওয়া (মোবাইলের জন্য গুরুত্বপূর্ণ)
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(function(stream) {
@@ -690,6 +661,7 @@
                 })
                 .catch(function(err) {
                     console.log('Microphone permission denied:', err);
+                    showVoiceStatus('🎤 মাইক্রোফোন অনুমতি দিন', 'error');
                 });
         }
     };
@@ -837,7 +809,7 @@
     }
 
     function escapeHtml(text) {
-        return text
+        return String(text)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -852,6 +824,6 @@
         appendMessage(query, 'user-msg', 'user-row');
         appendMessage(savedResponse, 'bot-msg', 'bot-row');
     }
-</script>
+    </script>
 </body>
 </html>
