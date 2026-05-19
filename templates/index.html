@@ -337,6 +337,60 @@
                 padding: 12px 15px;
             }
         }
+        /* Voice Button Styles */
+.voice-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.voice-btn:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.voice-btn.listening {
+    background-color: #ff4444;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.input-group {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 30px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#user-input {
+    background-color: transparent;
+    border: none;
+    color: #e2e8f0;
+    padding: 10px 15px;
+    flex: 1;
+}
+
+.voice-status {
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+    color: #38bdf8;
+}
     </style>
 </head>
 <body>
@@ -385,10 +439,14 @@
             <div class="input-panel">
                 <div class="input-group">
                     <input type="text" id="user-input" class="form-control" placeholder="আপনার লক্ষণ এখানে লিখুন... (যেমন: জ্বর, সর্দি, cough, chest pain)" onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button class="voice-btn" id="voice-btn" onclick="startVoiceInput()">
+            <i class="fa-solid fa-microphone"></i>
+        </button>
                     <button class="btn btn-send" id="send-btn" onclick="sendMessage()">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
+                 <div id="voice-status" class="voice-status"></div>
                 <div class="text-center text-white mt-2">
                     <div style="font-size: 14px;">AI can be mistake.</div>
                     <div style="font-size: 14px;">ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন । </div>
@@ -446,203 +504,354 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        // চ্যাট মেমোরি অবজেক্ট
-        let currentChatId = null;
-        const WELCOME_TEXT = `👋 হ্যালো! আমি আপনার লোকাল হেলথ অ্যাসিস্ট্যান্ট। আপনার যেকোনো শারীরিক সমস্যা বা লক্ষণ (যেমন: জ্বর, বুকে ব্যথা, পেট কামড়ানো) বাংলায় বা ইংরেজিতে লিখুন। আমি তাৎক্ষণিক প্রাথমিক চিকিৎসা ও বিশেষজ্ঞ ডাক্তারের পরামর্শ দেব।`;
+<script>
+    // চ্যাট মেমোরি অবজেক্ট
+    let currentChatId = null;
+    const WELCOME_TEXT = `👋 হ্যালো! আমি আপনার লোকাল হেলথ অ্যাসিস্ট্যান্ট। আপনার যেকোনো শারীরিক সমস্যা বা লক্ষণ (যেমন: জ্বর, বুকে ব্যথা, পেট কামড়ানো) বাংলায় বা ইংরেজিতে লিখুন বা ভয়েস বলুন। আমি তাৎক্ষণিক প্রাথমিক চিকিৎসা ও বিশেষজ্ঞ ডাক্তারের পরামর্শ দেব।`;
 
-        // পেজ লোড হবার সাথে সাথে হিস্ট্রি এবং চ্যাট রেন্ডার করা
-        window.onload = function() {
-            loadHistoryList();
-            startNewChat();
-        };
+    // Voice Recognition Setup
+    let recognition = null;
+    let isListening = false;
+    let voiceTimeout = null;
 
-        // সাইডবার ওপেন/ক্লোজ টগল ফাংশন
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar-wrapper');
-            sidebar.classList.toggle('show');
-        }
-
-        // মোবাইল ডিভাইসে আইটেম সিলেক্ট করলে অটো সাইডবার বন্ধ করার জন্য
-        function closeSidebarOnMobile() {
-            const sidebar = document.getElementById('sidebar-wrapper');
-            if (sidebar.classList.contains('show')) {
-                sidebar.classList.remove('show');
-            }
-        }
-
-        // একদম নতুন চ্যাট সেশন শুরু করা
-        function startNewChat() {
-            currentChatId = 'chat_' + Date.now();
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = '';
-            
-            // ওয়েলকাম মেসেজ পুশ করা
-            appendMessage(WELCOME_TEXT, 'bot-msg', 'bot-row');
-            document.getElementById('user-input').value = '';
-            document.getElementById('user-input').focus();
-        }
-
-        // কারেন্ট স্ক্রিনের চ্যাট ক্লিয়ার করা
-        function clearCurrentChat() {
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = '';
-            appendMessage(WELCOME_TEXT, 'bot-msg', 'bot-row');
-        }
-
-        // মেসেজ ব্যাকএন্ডে পাঠানো
-        function sendMessage() {
-            const inputField = document.getElementById('user-input');
-            const message = inputField.value.trim();
-            if (!message) return;
-
-            // ১. ইউজারের মেসেজ স্ক্রিনে দেখানো
-            appendMessage(message, 'user-msg', 'user-row');
-            inputField.value = '';
-
-            // ২. লোডার দেখানো
-            const loadingId = appendMessage('<div class="typing-loader"><span></span><span></span><span></span></div>', 'bot-msg', 'bot-row');
-
-            // ৩. ব্যাকএন্ড এপিআই হিট করা
-            fetch('/ask', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message: message })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const loader = document.getElementById(loadingId);
-                if (loader) loader.remove();
-
-                if (data.response) {
-                    let formattedText = data.response
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/📋/g, '📋')
-                        .replace(/🩹/g, '🩹')
-                        .replace(/🌿/g, '🌿')
-                        .replace(/🩺/g, '🩺')
-                        .replace(/⚠️/g, '⚠️')
-                        .replace(/🚨/g, '🚨');
-                    
-                    appendMessage(formattedText, 'bot-msg', 'bot-row');
-                    
-                    // ৪. সফল সার্চ হলে লোকাল স্টোরেজে সেভ করা
-                    saveToLocalStorage(message, formattedText);
-                } else if (data.error) {
-                    appendMessage('ত্রুটি: ' + data.error, 'bot-msg text-danger', 'bot-row');
-                } else {
-                    appendMessage('দুঃখিত, কোনো টেকনিক্যাল সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।', 'bot-msg text-danger', 'bot-row');
-                }
-            })
-            .catch(error => {
-                const loader = document.getElementById(loadingId);
-                if (loader) loader.remove();
-                appendMessage('সার্ভার রেসপন্স করছে না। পাইথন কনসোল চেক করুন।', 'bot-msg text-danger', 'bot-row');
-                console.error('Fetch System Error:', error);
-            });
-        }
-
-        // স্ক্রিনে চ্যাট রেন্ডার করার ফাংশন
-        function appendMessage(text, className, rowType) {
-            const chatBox = document.getElementById('chat-box');
-            const messageId = 'msg-' + Date.now() + Math.random().toString(36).substr(2, 5);
-            
-            const rowDiv = document.createElement('div');
-            rowDiv.className = `message-row ${rowType}`;
-            rowDiv.id = messageId;
-            
-            const msgDiv = document.createElement('div');
-            msgDiv.className = className;
-            msgDiv.innerHTML = text.replace(/\n/g, '<br>');
-            
-            rowDiv.appendChild(msgDiv);
-            chatBox.appendChild(rowDiv);
-            
-            chatBox.scrollTop = chatBox.scrollHeight;
-            return messageId;
-        }
-
-        /* ================= LOCAL STORAGE HISTORY ENGINE ================= */
+    // ব্রাউজার Speech Recognition সাপোর্ট চেক
+    function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
-        function saveToLocalStorage(query, responseText) {
-            let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
-            
-            // একই কোয়েরি বারবার সেভ করা এড়াতে ডুপ্লিকেট রিমুভ
-            history = history.filter(item => item.query.toLowerCase() !== query.toLowerCase());
-            
-            // নতুন সার্চ অবজেক্ট পুশ করা
-            history.unshift({
-                id: 'hist_' + Date.now(),
-                query: query,
-                response: responseText,
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            });
-
-            // সর্বোচ্চ ১৫টি হিস্ট্রি রেকর্ড রাখা
-            if(history.length > 15) history.pop();
-
-            localStorage.setItem('doc_bot_history', JSON.stringify(history));
-            loadHistoryList();
+        if (!SpeechRecognition) {
+            console.log('Speech recognition not supported');
+            const voiceBtn = document.getElementById('voice-btn');
+            if(voiceBtn) voiceBtn.style.display = 'none';
+            return null;
         }
+        
+        const recognitionInstance = new SpeechRecognition();
+        recognitionInstance.continuous = false;
+        recognitionInstance.interimResults = true;
+        recognitionInstance.lang = 'bn-BD';  // বাংলা ও ইংরেজি উভয়ের জন্য
+        
+        return recognitionInstance;
+    }
 
-        function loadHistoryList() {
-            const historyList = document.getElementById('history-list');
-            const history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+    // ভয়েস ইনপুট শুরু করার ফাংশন (আপগ্রেডেড)
+    function startVoiceInput() {
+        // মাইক্রোফোন চেক
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showVoiceStatus('❌ আপনার ব্রাউজার মাইক্রোফোন সাপোর্ট করে না', 'error');
+            return;
+        }
+        
+        // নতুন recognition instance তৈরি
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            showVoiceStatus('❌ ভয়েস ইনপুট সাপোর্ট করে না। Chrome ব্যবহার করুন।', 'error');
+            return;
+        }
+        
+        // আগের recognition বন্ধ করে নতুন তৈরি
+        if (recognition) {
+            try {
+                recognition.stop();
+            } catch(e) {}
+        }
+        
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'bn-BD';  // বাংলা ও ইংরেজি উভয় সাপোর্ট
+        
+        let finalTranscript = '';
+        let interimTranscript = '';
+        
+        // রেজাল্ট পাওয়ার পর
+        recognition.onresult = function(event) {
+            finalTranscript = '';
+            interimTranscript = '';
             
-            if(history.length === 0) {
-                historyList.innerHTML = '<div class="text-muted text-center" style="font-size:12px; padding:10px;">No history yet</div>';
-                return;
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
             }
-
-            historyList.innerHTML = '';
-            history.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'history-item';
-                
-                // Content section + Delete button
-                itemDiv.innerHTML = `
-                    <div class="history-text" onclick="loadOldChatFromHistory('${escapeHtml(item.query)}', '${escapeHtml(item.response)}'); closeSidebarOnMobile();">
-                        <i class="fa-regular fa-comment-medical text-info"></i> 
-                        <span>${item.query}</span>
-                    </div>
-                    <button class="btn-delete-history" onclick="deleteHistoryItem(event, '${item.id}')" title="Delete record">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                `;
-                historyList.appendChild(itemDiv);
-            });
-        }
-
-        // সিঙ্গেল হিস্ট্রি আইটেম ডিলিট করার ফাংশন
-        function deleteHistoryItem(event, id) {
-            event.stopPropagation(); // ক্লিক যেন চ্যাট লোড না করে ফেলে
-            let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
-            history = history.filter(item => item.id !== id);
-            localStorage.setItem('doc_bot_history', JSON.stringify(history));
-            loadHistoryList();
-        }
-
-        // HTML স্ট্রিং এস্কেপ করার জন্য হেল্পার ফাংশন (XSS/Breakage প্রোটেকশন)
-        function escapeHtml(text) {
-            return text
-                .replace(/'/g, "\\'")
-                .replace(/"/g, '&quot;')
-                .replace(/\n/g, '\\n')
-                .replace(/\r/g, '\\r');
-        }
-
-        function loadOldChatFromHistory(query, savedResponse) {
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = '';
             
-            // पुरानो সার্চ এবং তার উত্তর স্ক্রিনে রেন্ডার করা
-            appendMessage(query.replace(/\\'/g, "'"), 'user-msg', 'user-row');
-            appendMessage(savedResponse.replace(/\\'/g, "'"), 'bot-msg', 'bot-row');
+            // ইন্টারিম রেজাল্ট দেখান (রিয়েল টাইম)
+            const currentText = finalTranscript || interimTranscript;
+            if (currentText.trim().length > 0) {
+                const inputField = document.getElementById('user-input');
+                inputField.value = currentText;
+            }
+            
+            // ফাইনাল রেজাল্ট পেলে
+            if (finalTranscript.trim().length > 0) {
+                const recognizedText = finalTranscript.trim();
+                console.log('Final recognized:', recognizedText);
+                const inputField = document.getElementById('user-input');
+                inputField.value = recognizedText;
+                showVoiceStatus('✅ "' + recognizedText + '"', 'success');
+                
+                // 4-6 সেকেন্ড ওয়েট করে অটো সার্চ (এখন 2 সেকেন্ড)
+                setTimeout(function() {
+                    sendMessage();
+                }, 2000);
+            }
+        };
+        
+        // এরর হ্যান্ডলিং
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            
+            let errorMessage = '';
+            switch(event.error) {
+                case 'no-speech':
+                    errorMessage = 'কোনো কথা শোনা যায়নি। আবার চেষ্টা করুন।';
+                    break;
+                case 'audio-capture':
+                    errorMessage = 'মাইক্রোফোন পাওয়া যায়নি।';
+                    break;
+                case 'not-allowed':
+                    errorMessage = 'মাইক্রোফোন অনুমতি দিন।';
+                    break;
+                default:
+                    errorMessage = 'আবার চেষ্টা করুন।';
+            }
+            showVoiceStatus('❌ ' + errorMessage, 'error');
+            removeListeningStyle();
+        };
+        
+        recognition.onend = function() {
+            console.log('Speech recognition ended');
+            removeListeningStyle();
+        };
+        
+        recognition.onstart = function() {
+            console.log('Speech recognition started');
+            isListening = true;
+            const voiceBtn = document.getElementById('voice-btn');
+            voiceBtn.classList.add('listening');
+            showVoiceStatus('🎤 কথা বলা শুরু করুন (বাংলা বা ইংরেজি)...', 'listening');
+        };
+        
+        // শুরু করুন
+        try {
+            recognition.start();
+        } catch(e) {
+            console.log('Error starting:', e);
+            showVoiceStatus('❌ ভয়েস শুরু করা যায়নি', 'error');
+            removeListeningStyle();
         }
-    </script>
+    }
+
+    function showVoiceStatus(message, type) {
+        const statusDiv = document.getElementById('voice-status');
+        if (!statusDiv) return;
+        statusDiv.innerHTML = message;
+        statusDiv.style.display = 'block';
+        
+        if (type === 'error') {
+            statusDiv.style.color = '#f87171';
+            setTimeout(() => {
+                if (statusDiv.innerHTML === message) {
+                    statusDiv.style.display = 'none';
+                }
+            }, 3000);
+        } else if (type === 'success') {
+            statusDiv.style.color = '#4ade80';
+            setTimeout(() => {
+                if (statusDiv.innerHTML === message) {
+                    statusDiv.style.display = 'none';
+                }
+            }, 3000);
+        } else if (type === 'listening') {
+            statusDiv.style.color = '#38bdf8';
+        }
+    }
+
+    function removeListeningStyle() {
+        isListening = false;
+        const voiceBtn = document.getElementById('voice-btn');
+        if(voiceBtn) voiceBtn.classList.remove('listening');
+    }
+
+    // পেজ লোড হলে
+    window.onload = function() {
+        loadHistoryList();
+        startNewChat();
+        
+        // মাইক্রোফোন পারমিশন আগে থেকেই নেওয়া
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    console.log('Microphone permission granted');
+                    stream.getTracks().forEach(track => track.stop());
+                })
+                .catch(function(err) {
+                    console.log('Microphone permission denied:', err);
+                });
+        }
+    };
+
+    // সাইডবার ওপেন/ক্লোজ টগল ফাংশন
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar-wrapper');
+        sidebar.classList.toggle('show');
+    }
+
+    function closeSidebarOnMobile() {
+        const sidebar = document.getElementById('sidebar-wrapper');
+        if (sidebar.classList.contains('show')) {
+            sidebar.classList.remove('show');
+        }
+    }
+
+    function startNewChat() {
+        currentChatId = 'chat_' + Date.now();
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML = '';
+        appendMessage(WELCOME_TEXT, 'bot-msg', 'bot-row');
+        document.getElementById('user-input').value = '';
+        document.getElementById('user-input').focus();
+    }
+
+    function clearCurrentChat() {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML = '';
+        appendMessage(WELCOME_TEXT, 'bot-msg', 'bot-row');
+    }
+
+    function sendMessage() {
+        const inputField = document.getElementById('user-input');
+        const message = inputField.value.trim();
+        if (!message) return;
+
+        appendMessage(message, 'user-msg', 'user-row');
+        inputField.value = '';
+
+        const loadingId = appendMessage('<div class="typing-loader"><span></span><span></span><span></span></div>', 'bot-msg', 'bot-row');
+
+        fetch('/ask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const loader = document.getElementById(loadingId);
+            if (loader) loader.remove();
+
+            if (data.response) {
+                let formattedText = data.response
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/📋/g, '📋')
+                    .replace(/🩹/g, '🩹')
+                    .replace(/🌿/g, '🌿')
+                    .replace(/🩺/g, '🩺')
+                    .replace(/⚠️/g, '⚠️')
+                    .replace(/🚨/g, '🚨');
+                
+                appendMessage(formattedText, 'bot-msg', 'bot-row');
+                saveToLocalStorage(message, formattedText);
+            } else if (data.error) {
+                appendMessage('ত্রুটি: ' + data.error, 'bot-msg text-danger', 'bot-row');
+            } else {
+                appendMessage('দুঃখিত, কোনো টেকনিক্যাল সমস্যা হয়েছে।', 'bot-msg text-danger', 'bot-row');
+            }
+        })
+        .catch(error => {
+            const loader = document.getElementById(loadingId);
+            if (loader) loader.remove();
+            appendMessage('সার্ভার রেসপন্স করছে না।', 'bot-msg text-danger', 'bot-row');
+            console.error('Error:', error);
+        });
+    }
+
+    function appendMessage(text, className, rowType) {
+        const chatBox = document.getElementById('chat-box');
+        const messageId = 'msg-' + Date.now() + Math.random().toString(36).substr(2, 5);
+        
+        const rowDiv = document.createElement('div');
+        rowDiv.className = `message-row ${rowType}`;
+        rowDiv.id = messageId;
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = className;
+        msgDiv.innerHTML = text.replace(/\n/g, '<br>');
+        
+        rowDiv.appendChild(msgDiv);
+        chatBox.appendChild(rowDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return messageId;
+    }
+
+    function saveToLocalStorage(query, responseText) {
+        let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+        history = history.filter(item => item.query.toLowerCase() !== query.toLowerCase());
+        history.unshift({
+            id: 'hist_' + Date.now(),
+            query: query,
+            response: responseText,
+            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        });
+        if(history.length > 15) history.pop();
+        localStorage.setItem('doc_bot_history', JSON.stringify(history));
+        loadHistoryList();
+    }
+
+    function loadHistoryList() {
+        const historyList = document.getElementById('history-list');
+        const history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+        
+        if(history.length === 0) {
+            historyList.innerHTML = '<div class="text-muted text-center" style="font-size:12px; padding:10px;">No history yet</div>';
+            return;
+        }
+
+        historyList.innerHTML = '';
+        history.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'history-item';
+            itemDiv.innerHTML = `
+                <div class="history-text" onclick="loadOldChatFromHistory('${escapeHtml(item.query)}', '${escapeHtml(item.response)}'); closeSidebarOnMobile();">
+                    <i class="fa-regular fa-comment-medical text-info"></i> 
+                    <span>${escapeHtml(item.query)}</span>
+                </div>
+                <button class="btn-delete-history" onclick="deleteHistoryItem(event, '${item.id}')" title="Delete record">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            historyList.appendChild(itemDiv);
+        });
+    }
+
+    function deleteHistoryItem(event, id) {
+        event.stopPropagation();
+        let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('doc_bot_history', JSON.stringify(history));
+        loadHistoryList();
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .substring(0, 100);
+    }
+
+    function loadOldChatFromHistory(query, savedResponse) {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML = '';
+        appendMessage(query, 'user-msg', 'user-row');
+        appendMessage(savedResponse, 'bot-msg', 'bot-row');
+    }
+</script>
 </body>
 </html>
