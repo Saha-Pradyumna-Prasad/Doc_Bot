@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -426,7 +426,7 @@
 
             <div class="input-panel">
                 <div class="input-group">
-                    <input type="text" id="user-input" class="form-control" placeholder="লিখুন বা ভয়েস বলুন... (যেমন: জ্বর, fever)" onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <input type="text" id="user-input" class="form-control"  onkeypress="if(event.key === 'Enter') sendMessage()">
                     <button class="voice-btn" id="voice-btn" onclick="startVoiceInput()">
                         <i class="fa-solid fa-microphone"></i>
                     </button>
@@ -436,12 +436,12 @@
                 </div>
                 <div id="voice-status" class="voice-status"></div>
                 <div class="text-center text-white mt-2">
-                    <div style="font-size: 14px;">AI can be mistake.</div>
+                    <div style="font-size: 14px;">AI can make mistake.</div>
                     <div style="font-size: 14px;">ওষুধ সেবনের আগে অবশ্যই ডাক্তারের পরামর্শ নিয়ে নিবেন ।</div>
                     <div class="mt-2 d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2">
                         <footer style="font-size: 14px;"><b>Powered by Dev.Ankur</b></footer>
-                        <a href="https://drive.google.com/file/d/1bEGJUW2Pl1JHRCVWKSrPxpZRkkpzWqSu/view?usp=sharing" class="btn-download-app" target="_blank">
-                            <i class="fa-solid fa-mobile-screen-button"></i> Download App for Mobile
+                        <a href="https://drive.google.com/file/d/1xOE7vP5FMECNz7Vy0a3KH7VhozSCycgG/view?usp=sharing" class="btn-download-app" target="_blank">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Download App for Android
                         </a>
                     </div>
                 </div>
@@ -459,15 +459,27 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="instructions-list list-unstyled ps-1">
-                        <li><i class="fa-solid fa-circle-check text-success me-2"></i><strong>ভয়েস ইনপুট:</strong> 🎤 বাটনে ক্লিক করে বাংলা বা ইংরেজিতে কথা বলুন। 2 সেকেন্ড পর অটোমেটিক সার্চ হবে।</li>
-                        <li><i class="fa-solid fa-circle-check text-success me-2"></i><strong>সংক্ষিপ্ত ইনপুট:</strong> আপনার সমস্যা বা প্রধান লক্ষণটি (যেমন: <b>জ্বর, সর্দি, fever, chest pain</b>) লিখলেই রোবট উত্তর দেবে।</li>
-                        <li><i class="fa-solid fa-clock text-warning me-2"></i><strong>ইনস্ট্যান্ট রেসপন্স:</strong> অত্যন্ত দ্রুত এবং নিখুঁতভাবে প্রাথমিক চিকিৎসা ও ডাক্তারের পরামর্শ দেয়।</li>
-                        <li><i class="fa-solid fa-folder-minus text-info me-2"></i><strong>হিস্ট্রি ট্র্যাকিং:</strong> বামপাশের "Search History" প্যানেলে রেকর্ড জমা হবে।</li>
+                     <ul class="instructions-list list-unstyled ps-1">
+                        <li>
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            <strong>সংক্ষিপ্ত ইনপুট:</strong> এই অ্যাপে বড় কোনো বাক্য লেখার প্রয়োজন নেই। আপনার সমস্যা বা প্রধান লক্ষণটি (যেমন: <b>জ্বর, সর্দি, পেটে ব্যথা, chest pain etc</b>) শুধু একটি শব্দে লিখলে বা ভয়েস দিলেও রোবট নির্ভুল উত্তর দেবে।
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock text-warning me-2"></i>
+                            <strong>ইনস্ট্যান্ট রেসপন্স:</strong> আপনার মূল্যবান সময় বাঁচাতে অত্যন্ত দ্রুত এবং নিখুঁতভাবে অটোমেটিক প্রাইমারি ফার্স্ট এইড ও ডাক্তারের পরামর্শ জেনারেট করা হয়।
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-folder-minus text-info me-2"></i>
+                            <strong>হিস্ট্রি ট্র্যাকিং:</strong> প্রতিবার সার্চ করার সাথে সাথে বামপাশের <b>"Search History"</b> প্যানেলে একটি করে রেকর্ড জমা হবে, যা পরবর্তীতে যেকোনো সময় এক ক্লিকে দেখা যাবে।
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-trash-can text-danger me-2"></i>
+                            <strong>হিস্ট্রি ও চ্যাট ডিলিট:</strong> আপনি চাইলে সাইডবারের নির্দিষ্ট কোনো সার্চ রেকর্ড ডিলিট আইকনে চেপে মুছে ফেলতে পারবেন। এছাড়া ডানদিকের ট্র্যাশ বাটনে ক্লিক করে পুরো কারেন্ট চ্যাট স্ক্রিন মুহূর্তেই ফাঁকা করা যাবে।
+                        </li>
                         <hr class="border-secondary my-3">
                         <li class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-20 text-warning">
                             <i class="fa-solid fa-triangle-exclamation me-2 fs-5 text-danger"></i>
-                            <strong>সতর্কতা:</strong> এই বটটি শুধুমাত্র প্রাথমিক তথ্য ও সচেতনতার জন্য। ওষুধ ডাক্তারের পরামর্শ ছাড়া সেবন করবেন না।
+                            <strong>সতর্কতা:</strong> এই বটটি শুধুমাত্র প্রাথমিক তথ্য ও সচেতনতার জন্য তৈরি। কোনো ধরনের ওষুধ বিশেষজ্ঞ ডাক্তারের প্রেসক্রিপশন ব্যতিরেকে সেবন করা সম্পূর্ণ নিষিদ্ধ ও বিপজ্জনক। এর অন্যথা হলে <b>DOC BOT</b> কর্তৃপক্ষ দায়ী থাকবে না ।  
                         </li>
                     </ul>
                 </div>
@@ -485,7 +497,7 @@
     <script>
     // চ্যাট মেমোরি অবজেক্ট
     let currentChatId = null;
-    const WELCOME_TEXT = `👋 হ্যালো! আমি আপনার হেলথ অ্যাসিস্ট্যান্ট। আপনার সমস্যা বলুন (বাংলা বা ইংরেজিতে) - যেমন: জ্বর, fever, chest pain, কাশি আমি উত্তর দেব।`;
+    const WELCOME_TEXT = `👋 হ্যালো! আমি আপনার হেলথ অ্যাসিস্ট্যান্ট। আপনার সমস্যা বলুন (বাংলা বা ইংরেজিতে) - যেমন: জ্বর, fever, chest pain ইত্যাদি আমি উত্তর দেব।`;
 
     // Voice Recognition Setup - মোবাইল ও ওয়েব উভয়ের জন্য
     let recognition = null;
@@ -762,6 +774,7 @@
 
     function saveToLocalStorage(query, responseText) {
         let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
+        // Remove duplicate if same query exists (to keep latest on top)
         history = history.filter(item => item.query.toLowerCase() !== query.toLowerCase());
         history.unshift({
             id: 'hist_' + Date.now(),
@@ -779,7 +792,7 @@
         const history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
         
         if(history.length === 0) {
-            historyList.innerHTML = '<div class="text-muted text-center" style="font-size:12px; padding:10px;">No history yet</div>';
+            historyList.innerHTML = '<div class="text-white text-center" style="font-size:12px; padding:10px;">No history yet</div>';
             return;
         }
 
@@ -787,21 +800,36 @@
         history.forEach(item => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'history-item';
-            itemDiv.innerHTML = `
-                <div class="history-text" onclick="loadOldChatFromHistory('${escapeHtml(item.query)}', '${escapeHtml(item.response)}'); closeSidebarOnMobile();">
-                    <i class="fa-regular fa-comment-medical text-info"></i> 
-                    <span>${escapeHtml(item.query)}</span>
-                </div>
-                <button class="btn-delete-history" onclick="deleteHistoryItem(event, '${item.id}')" title="Delete record">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            `;
+            
+            // Create the text span with proper onclick handler to load the full conversation
+            const textSpan = document.createElement('div');
+            textSpan.className = 'history-text';
+            textSpan.innerHTML = `<i class="fa-regular fa-comment-medical text-info"></i> <span>${escapeHtml(item.query)}</span>`;
+            // Attach click event to load the old chat properly
+            textSpan.onclick = (function(query, response) {
+                return function() {
+                    loadOldChatFromHistory(query, response);
+                    closeSidebarOnMobile();
+                };
+            })(item.query, item.response);
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn-delete-history';
+            deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+            deleteBtn.onclick = (function(event, id) {
+                return function(e) {
+                    e.stopPropagation();
+                    deleteHistoryItem(id);
+                };
+            })(null, item.id);
+            
+            itemDiv.appendChild(textSpan);
+            itemDiv.appendChild(deleteBtn);
             historyList.appendChild(itemDiv);
         });
     }
 
-    function deleteHistoryItem(event, id) {
-        event.stopPropagation();
+    function deleteHistoryItem(id) {
         let history = JSON.parse(localStorage.getItem('doc_bot_history')) || [];
         history = history.filter(item => item.id !== id);
         localStorage.setItem('doc_bot_history', JSON.stringify(history));
@@ -818,11 +846,19 @@
             .substring(0, 100);
     }
 
+    // IMPORTANT FIX: This function now correctly loads the selected conversation session
     function loadOldChatFromHistory(query, savedResponse) {
         const chatBox = document.getElementById('chat-box');
+        // Clear current chat content
         chatBox.innerHTML = '';
+        // Add user message (the query)
         appendMessage(query, 'user-msg', 'user-row');
+        // Add the bot's saved response exactly as it was stored
         appendMessage(savedResponse, 'bot-msg', 'bot-row');
+        // Update currentChatId so new messages are saved in a new session if needed, but we just show the old conversation.
+        currentChatId = 'chat_' + Date.now();
+        // Scroll to bottom to show latest message (which is the bot response)
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
     </script>
 </body>
