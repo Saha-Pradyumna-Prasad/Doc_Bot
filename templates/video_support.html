@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Video Support - DOC BOT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #0b111e; /* Matching Deep Cyber Blue */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        /* Top Header Styling */
+        .video-header {
+            background-color: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-back {
+            background-color: #1e293b;
+            color: #38bdf8 !important;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background-color: #38bdf8;
+            color: #0f172a !important;
+            border-color: #38bdf8;
+            transform: translateX(-3px);
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .search-box {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 30px;
+            padding: 10px 20px;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            background-color: #11192e;
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+            color: #e2e8f0;
+        }
+
+        /* Video Cards Layout */
+        .video-card {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.15);
+        }
+
+        /* Video Thumbnail Overlay Style */
+        .thumbnail-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background-color: #020617;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .thumbnail-wrapper img {
+            transform: scale(1.03);
+        }
+
+        .play-btn-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.8);
+            color: #38bdf8;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            border: 2px solid #38bdf8;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .video-card:hover .play-btn-overlay {
+            background: #38bdf8;
+            color: #0f172a;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .card-body-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .problem-badge {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .video-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f1f5f9;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .btn-watch {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .video-card:hover .btn-watch {
+            background: linear-gradient(135deg, #38bdf8, #2563eb);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #1e293b;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="video-header">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ url_for('index') }}" class="btn-back"><i class="fa-solid fa-arrow-left me-2"></i> Back to Chat</a>
+                <h4 class="mb-0 text-white fw-bold d-none d-sm-block">DOC BOT <span class="text-info">🩺</span> Video Support</h4>
+            </div>
+            <div class="text-info fw-bold fs-5">
+                <i class="fa-solid fa-circle-play me-1"></i> হেলথ ভিডিও গাইড
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="search-container">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-secondary text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="videoSearch" class="form-control search-box border-start-0"  onkeyup="filterVideos()">
+            </div>
+        </div>
+
+        <div class="row g-4" id="videoGrid">
+            
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="fever জ্বর গা গরম তাপমাত্রা">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=fever+treatment+first+aid+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1584017911766-d451b3d0e843?q=80&w=600&auto=format&fit=crop" alt="Fever Support">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Fever / জ্বর</span>
+                            <h5 class="video-title">জ্বর হলে করণীয় ও ঘরোয়া প্রাথমিক চিকিৎসা গাইড</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="chest pain বুকে ব্যথা হার্ট অ্যাটাক heart stroke">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=chest+pain+reasons+first+aid+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?q=80&w=600&auto=format&fit=crop" alt="Chest Pain Support">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Chest Pain / বুকে ব্যথা</span>
+                            <h5 class="video-title">বুকে ব্যথা কেন হয়? হার্ট অ্যাটাক বনাম গ্যাস্ট্রিকের লক্ষণ</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="cold ঠান্ডা সর্দি হাঁচি কাশি cough flu">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=common+cold+cough+remedy+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=600&auto=format&fit=crop" alt="Cold Support">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Cold & Cough / ঠান্ডা-সর্দি</span>
+                            <h5 class="video-title">ঋতু পরিবর্তন জনিত ঠান্ডা, সর্দি ও কাশির ঘরোয়া সমাধান</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="stroke স্ট্রোক প্যারালাইসিস মস্তিস্ক">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=stroke+symptoms+first+aid+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=600&auto=format&fit=crop" alt="Stroke Support">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Stroke / স্ট্রোক</span>
+                            <h5 class="video-title">ব্রেন স্ট্রোকের পূর্ব লক্ষণ ও জরুরি ফার্স্ট এইড ম্যানেজমেন্ট</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="migraine মাইগ্রেন মাথাব্যথা head pain">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=migraine+headache+relief+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop" alt="Migraine Support">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Migraine / মাইগ্রেন</span>
+                            <h5 class="video-title">মাইগ্রেনের তীব্র মাথাব্যথা দূর করার প্রাকৃতিক ও ডাক্তারি উপায়</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="eye pain eye redness চোখ ব্যথা চোখ ওঠা dry eye">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=eye+conjunctivitis+treatment+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=600&auto=format&fit=crop" alt="Eye Care">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Eye Care / চোখ ওঠা ও ব্যথা</span>
+                            <h5 class="video-title">চোখ লাল হওয়া, চোখ ওঠা ও চোখ ব্যথার নিরাপদ চিকিৎসা</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="toothache দাঁত ব্যথা মাড়ি ফোলা tooth pain">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=toothache+instant+relief+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?q=80&w=600&auto=format&fit=crop" alt="Toothache Care">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Toothache / দাঁত ব্যথা</span>
+                            <h5 class="video-title">দাঁতের তীব্র ব্যথা ও মাড়ি ফোলা থেকে ১ মিনিটে মুক্তির উপায়</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="ear pain কান ব্যথা কান পাকা ear infection">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=ear+pain+infection+treatment+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=600&auto=format&fit=crop" alt="Ear Care">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Ear Pain / কান ব্যথা</span>
+                            <h5 class="video-title">কানে ব্যথা ও ইনফেকশন হলে তাৎক্ষণিক করণীয় ও ঘরোয়া যত্ন</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 video-item" data-keywords="depression ডিপ্রেশন দুশ্চিন্তা মানসিক অবসাদ anxiety">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/results?search_query=overcome+depression+anxiety+bangla', '_blank')">
+                    <div class="thumbnail-wrapper">
+                        <img src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?q=80&w=600&auto=format&fit=crop" alt="Mental Health Support">
+                        <div class="play-btn-overlay"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                    <div class="card-body-content">
+                        <div>
+                            <span class="problem-badge">Depression / মানসিক স্বাস্থ্য</span>
+                            <h5 class="video-title">ডিপ্রেশন, অতিরিক্ত দুশ্চিন্তা ও মানসিক ক্লান্তি দূর করার উপায়</h5>
+                        </div>
+                        <button class="btn-watch"><i class="fa-brands fa-youtube me-2"></i>Watch Video</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function filterVideos() {
+            const input = document.getElementById('videoSearch').value.toLowerCase().trim();
+            const items = document.getElementsByClassName('video-item');
+
+            for (let i = 0; i < items.length; i++) {
+                const keywords = items[i].getAttribute('data-keywords').toLowerCase();
+                if (keywords.includes(input)) {
+                    items[i].style.display = "block";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
