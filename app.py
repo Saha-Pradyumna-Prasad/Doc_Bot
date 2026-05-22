@@ -56,11 +56,15 @@ def process_medical_input(user_text):
     return None
 
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
+@app.route('/video_support')
+def video_support():
+    return render_template('video_support.html')
+
 @app.route('/ask', methods=['POST'])
-def ask_local_dataset():
+def ask():
     try:
         data = request.get_json()
         if not data or 'message' not in data:
@@ -80,7 +84,7 @@ def ask_local_dataset():
                     f"🌿 **ঘরোয়া সমাধান:**\n{list_found.get('home_remedy', 'তথ্য নেই।')}\n\n"
                     f"🩺 **পরামর্শের জন্য কোন ডাক্তার দেখাবেন:**\n↳ {list_found.get('specialist', 'জেনারেল ফিজিশিয়ান')}\n\n"
                     f"⚠️ **মেডিকেল সতর্কতা:**\n{list_found.get('medication_hint', 'তথ্য নেই।')}\n\n"
-                    f"🚨 **জরুরি বিপদের লক্ষণ (অবিলম্বে হাসপাতালে যান):**\n{list_found.get('warning_signs', 'তথ্য নেই।')}"
+                    f"🚨 **জরুরি বিপদের লক্ষণ (অবçalves হাসপাতালে যান):**\n{list_found.get('warning_signs', 'তথ্য নেই।')}"
                 )
             else:
                 response_text = (
@@ -104,6 +108,6 @@ def ask_local_dataset():
     except Exception as e:
         print(f"\n❌ [LOCAL SERVER ERROR]: {str(e)}\n")
         return jsonify({'error': str(e)}), 500
-
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=PORT, debug=True)
